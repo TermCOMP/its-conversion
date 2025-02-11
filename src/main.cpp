@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     if (to == "ari") {
         auto ari{its.to_ari()};
         for (unsigned i = 0; i < ari.childCount(); ++i) {
-            std::cout << ari.getChild(i).toString() << std::endl;
+            std::cout << ari.getChild(i).toCompactString() << std::endl;
         }
     } else if (to == "koat") {
         std::cout << its.to_koat();
