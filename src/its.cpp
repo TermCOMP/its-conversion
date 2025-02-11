@@ -41,9 +41,9 @@ void collect_vars(const Formula &f, std::set<std::string> &vars) {
         const auto rel {std::get<Rel>(f)};
         collect_vars(rel.lhs, vars);
         collect_vars(rel.rhs, vars);
-    } else if (std::holds_alternative<BoolApp>(f)) {
-        const auto app {std::get<BoolApp>(f)};
-        for (const auto &arg: app.args) {
+    } else if (std::holds_alternative<BoolAppPtr>(f)) {
+        const auto app {std::get<BoolAppPtr>(f)};
+        for (const auto &arg: app->args) {
             collect_vars(arg, vars);
         }
     }
@@ -52,9 +52,9 @@ void collect_vars(const Formula &f, std::set<std::string> &vars) {
 void collect_vars(const Expr &f, std::set<std::string> &vars) {
     if (std::holds_alternative<std::string>(f)) {
         vars.insert(std::get<std::string>(f));
-    } else if (std::holds_alternative<ArithApp>(f)) {
-        const auto app {std::get<ArithApp>(f)};
-        for (const auto &arg: app.args) {
+    } else if (std::holds_alternative<ArithAppPtr>(f)) {
+        const auto app {std::get<ArithAppPtr>(f)};
+        for (const auto &arg: app->args) {
             collect_vars(arg, vars);
         }
     }
@@ -240,8 +240,8 @@ sexpresso::Sexp to_sexp(const Expr &f) {
         return sexpresso::Sexp(escape(std::get<std::string>(f)));
     } else {
         sexpresso::Sexp res;
-        const auto app {std::get<ArithApp>(f)};
-        switch (app.op) {
+        const auto app {std::get<ArithAppPtr>(f)};
+        switch (app->op) {
             case ArithOp::UnaryMinus:
             case ArithOp::Minus: res.addChild("-");
             break;
@@ -250,7 +250,7 @@ sexpresso::Sexp to_sexp(const Expr &f) {
             case ArithOp::Times: res.addChild("*");
             break;
         }
-        for (const auto &arg: app.args) {
+        for (const auto &arg: app->args) {
             res.addChild(to_sexp(arg));
         }
         return res;
@@ -265,11 +265,11 @@ std::string to_koat(const Expr &f) {
     } else {
         std::string res;
         char op;
-        const auto app {std::get<ArithApp>(f)};
-        switch (app.op) {
+        const auto app {std::get<ArithAppPtr>(f)};
+        switch (app->op) {
             case ArithOp::UnaryMinus:
-            assert(app.args.size() == 1);
-            return "-" + ::to_koat(app.args.front());
+            assert(app->args.size() == 1);
+            return "-" + ::to_koat(app->args.front());
             break;
             case ArithOp::Minus: op = '-';
             break;
@@ -279,7 +279,7 @@ std::string to_koat(const Expr &f) {
             break;
             default: throw std::invalid_argument("unknown arithmetic operator");
         }
-        for (const auto &arg: app.args) {
+        for (const auto &arg: app->args) {
             res += ::to_koat(arg) + ' ' + op + ' ';
         }
         res = res.substr(0, res.length() - 3);
@@ -288,9 +288,9 @@ std::string to_koat(const Expr &f) {
 }
 
 bool is_true(const Formula &f) {
-    if (std::holds_alternative<BoolApp>(f)) {
-        const auto app {std::get<BoolApp>(f)};
-        return app.op == BoolOp::And && app.args.empty();
+    if (std::holds_alternative<BoolAppPtr>(f)) {
+        const auto app {std::get<BoolAppPtr>(f)};
+        return app->op == BoolOp::And && app->args.empty();
     }
     return false;
 }
@@ -315,17 +315,17 @@ sexpresso::Sexp to_sexp(const Formula &f) {
         }
         res.addChild(to_sexp(rel.lhs));
         res.addChild(to_sexp(rel.rhs));
-    } else if (std::holds_alternative<BoolApp>(f)) {
-        const auto app {std::get<BoolApp>(f)};
-        switch (app.op) {
+    } else if (std::holds_alternative<BoolAppPtr>(f)) {
+        const auto app {std::get<BoolAppPtr>(f)};
+        switch (app->op) {
             case BoolOp::And:
-                if (app.args.empty()) {
+                if (app->args.empty()) {
                     return sexpresso::Sexp("true");
                 }
                 res.addChild("and");
                 break;
             case BoolOp::Or:
-                if (app.args.empty()) {
+                if (app->args.empty()) {
                     return sexpresso::Sexp("false");
                 }
                 res.addChild("or");
@@ -334,7 +334,7 @@ sexpresso::Sexp to_sexp(const Formula &f) {
                 res.addChild("not");
                 break;
         }
-        for (const auto &arg: app.args) {
+        for (const auto &arg: app->args) {
             res.addChild(to_sexp(arg));
         }
     } else if (std::holds_alternative<Exists>(f)) {
@@ -375,16 +375,16 @@ std::string to_koat(const Formula &f) {
             break;
         }
         return to_koat(rel.lhs) + op + to_koat(rel.rhs);
-    } else if (std::holds_alternative<BoolApp>(f)) {
-        const auto app {std::get<BoolApp>(f)};
-        switch (app.op) {
+    } else if (std::holds_alternative<BoolAppPtr>(f)) {
+        const auto app {std::get<BoolAppPtr>(f)};
+        switch (app->op) {
             case BoolOp::And: op = "&&";
             break;
             case BoolOp::Or: op = "||";
             break;
             case BoolOp::Not: throw std::invalid_argument(".koat does not allow negation");
         }
-        for (const auto &arg: app.args) {
+        for (const auto &arg: app->args) {
             res += to_koat(arg) + " " + op + " ";
         }
         res = res.substr(0, res.size() - 4);

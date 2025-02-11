@@ -78,7 +78,7 @@ Formula AriParser::parse_formula(sexpresso::Sexp &s) {
         for (unsigned i = 1; i < s.childCount(); ++i) {
             args.push_back(parse_formula(s.getChild(i)));
         }
-        return Formula(BoolApp{op, args});
+        return Formula(std::make_shared<BoolApp>(op, args));
     } else {
         RelOp op;
         if (fst == "=") {
@@ -128,7 +128,7 @@ Expr AriParser::parse_expr(sexpresso::Sexp &s) {
     for (unsigned i = 1; i < s.childCount(); ++i) {
         args.push_back(parse_expr(s.getChild(i)));
     }
-    return Expr(ArithApp{op, args});
+    return Expr(std::make_shared<ArithApp>(op, args));
 }
 
 ITS AriParser::loadFromFile(const std::string &filename) {

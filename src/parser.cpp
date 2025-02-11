@@ -69,10 +69,10 @@ namespace sexpressionparser {
     Formula Self::parseCond(sexpresso::Sexp &sexp) {
         if (sexp.isString()) {
             if (sexp.str() == "false") {
-                return Formula(BoolApp{BoolOp::Or, std::vector<Formula>{}});
+                return Formula(std::make_shared<BoolApp>(BoolOp::Or, std::vector<Formula>{}));
             } else {
                 assert(sexp.str() == "true");
-                return Formula(BoolApp{BoolOp::And, std::vector<Formula>{}});
+                return Formula(std::make_shared<BoolApp>(BoolOp::And, std::vector<Formula>{}));
             }
         }
         const std::string op = sexp[0].str();
@@ -81,7 +81,7 @@ namespace sexpressionparser {
             for (unsigned int i = 1; i < sexp.childCount(); i++) {
                 args.push_back(parseCond(sexp[i]));
             }
-            return Formula(BoolApp{BoolOp::And, args});
+            return Formula(std::make_shared<BoolApp>(BoolOp::And, args));
         } else if (op == "exists") {
             sexpresso::Sexp scope = sexp[1];
             Exists ex;
@@ -99,7 +99,7 @@ namespace sexpressionparser {
     Formula Self::parseConstraint(sexpresso::Sexp &sexp) {
         if (sexp.childCount() == 2) {
             assert(sexp[0].str() == "not");
-            return Formula(BoolApp{BoolOp::Not, {parseConstraint(sexp[1])}});
+            return Formula(std::make_shared<BoolApp>(BoolOp::Not, std::vector{parseConstraint(sexp[1])}));
         }
         assert(sexp.childCount() == 3);
         const std::string &op {sexp[0].str()};
@@ -145,10 +145,10 @@ namespace sexpressionparser {
             } else {
                 throw std::invalid_argument("unknown arithmetic operator");
             }
-            return Expr(ArithApp{aop, std::vector{fst, snd}});
+            return Expr(std::make_shared<ArithApp>(aop, std::vector{fst, snd}));
         } else if (sexp.childCount() == 2) {
             assert(op == "-");
-            return Expr(ArithApp{ArithOp::UnaryMinus, std::vector{fst}});
+            return Expr(std::make_shared<ArithApp>(ArithOp::UnaryMinus, std::vector{fst}));
         }
         throw std::invalid_argument("unknown operator");
     }

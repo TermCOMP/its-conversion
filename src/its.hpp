@@ -14,8 +14,9 @@ enum class ArithOp {
 };
 
 struct ArithApp;
+using ArithAppPtr = std::shared_ptr<ArithApp>;
 
-using Expr = std::variant<ArithApp, long, std::string>;
+using Expr = std::variant<ArithAppPtr, long, std::string>;
 
 sexpresso::Sexp to_sexp(const Expr &f);
 std::string to_koat(const Expr &f);
@@ -41,9 +42,10 @@ enum class BoolOp {
 };
 
 struct BoolApp;
+using BoolAppPtr = std::shared_ptr<BoolApp>;
 struct Exists;
 
-using Formula = std::variant<BoolApp, Rel, Exists>;
+using Formula = std::variant<BoolAppPtr, Rel, Exists>;
 
 sexpresso::Sexp to_sexp(const Formula &f);
 std::string to_koat(const Formula &f);

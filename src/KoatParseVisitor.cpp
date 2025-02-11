@@ -58,7 +58,7 @@ antlrcpp::Any KoatParseVisitor::visitTrans(KoatParser::TransContext *ctx) {
         throw std::invalid_argument("Com-symbols are not supported");
     }
     r.rhs = rhss.front();
-    r.cond = BoolApp{BoolOp::And, std::vector<Formula>{}};
+    r.cond = std::make_shared<BoolApp>(BoolOp::And, std::vector<Formula>{});
     if (ctx->cond()) {
         r.cond = std::any_cast<cond_type>(visit(ctx->cond()));
     }
@@ -136,18 +136,18 @@ antlrcpp::Any KoatParseVisitor::visitExpr(KoatParser::ExprContext *ctx) {
         if (ctx->expr().size() == 2) {
             const auto arg1 = std::any_cast<expr_type>(visit(ctx->expr(0)));
             const auto arg2 = std::any_cast<expr_type>(visit(ctx->expr(1)));
-            return expr_type(ArithApp{ArithOp::Minus, std::vector{arg1, arg2}});
+            return expr_type(std::make_shared<ArithApp>(ArithOp::Minus, std::vector{arg1, arg2}));
         } else {
             const auto res = std::any_cast<expr_type>(visit(ctx->expr(0)));
-            return expr_type(ArithApp{ArithOp::UnaryMinus, std::vector{res}});
+            return expr_type(std::make_shared<ArithApp>(ArithOp::UnaryMinus, std::vector{res}));
         }
     } else {
         const auto arg1 = std::any_cast<expr_type>(visit(ctx->expr(0)));
         const auto arg2 = std::any_cast<expr_type>(visit(ctx->expr(1)));
         if (ctx->TIMES()) {
-            return expr_type(ArithApp{ArithOp::Times, std::vector{arg1, arg2}});
+            return expr_type(std::make_shared<ArithApp>(ArithOp::Times, std::vector{arg1, arg2}));
         } else if (ctx->PLUS()) {
-            return expr_type(ArithApp{ArithOp::Plus, std::vector{arg1, arg2}});
+            return expr_type(std::make_shared<ArithApp>(ArithOp::Plus, std::vector{arg1, arg2}));
         } else if (ctx->EXP()) {
             if (std::holds_alternative<long>(arg2)) {
                 const auto exponent {std::get<long>(arg2)};
@@ -155,7 +155,7 @@ antlrcpp::Any KoatParseVisitor::visitExpr(KoatParser::ExprContext *ctx) {
                 for (long i = 0; i < exponent; ++i) {
                     args.push_back(arg1);
                 }
-                return expr_type(ArithApp{ArithOp::Times, args});
+                return expr_type(std::make_shared<ArithApp>(ArithOp::Times, args));
             }
         }
     }
@@ -171,9 +171,9 @@ antlrcpp::Any KoatParseVisitor::visitFormula(KoatParser::FormulaContext *ctx) {
         const auto arg1 = std::any_cast<formula_type>(visit(ctx->formula(0)));
         const auto arg2 = std::any_cast<formula_type>(visit(ctx->formula(1)));
         if (ctx->AND()) {
-            return formula_type(BoolApp{BoolOp::And, std::vector{arg1, arg2}});
+            return formula_type(std::make_shared<BoolApp>(BoolOp::And, std::vector{arg1, arg2}));
         } else if (ctx->OR()) {
-            return formula_type(BoolApp{BoolOp::Or, std::vector{arg1, arg2}});
+            return formula_type(std::make_shared<BoolApp>(BoolOp::Or, std::vector{arg1, arg2}));
         }
     }
     throw std::invalid_argument("failed to parse formula " + ctx->getText());
