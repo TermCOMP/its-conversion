@@ -296,6 +296,9 @@ sexpresso::Sexp to_sexp(const Expr &f) {
     }
 }
 
+/*
+ * This function ignores precedences, which is fine for the examples from the TPDB f8460262, as there are no parantheses, but of course incorrect in general!
+ */
 std::string to_koat(const Expr &f) {
     if (std::holds_alternative<long>(f)) {
         return std::to_string(std::get<long>(f));
@@ -394,6 +397,9 @@ sexpresso::Sexp to_sexp(const Formula &f) {
     return res;
 }
 
+/*
+ * This function ignores precedences, which is fine for the examples from the TPDB f8460262, as there are no parantheses, but of course incorrect in general!
+ */
 std::string to_koat(const Formula &f) {
     std::string res;
     std::string op;
