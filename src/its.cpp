@@ -45,7 +45,7 @@ Expr mk_unary_minus(const Expr &arg) {
     return mk_arith_app(ArithOp::UnaryMinus, {arg});
 }
 
-Formula mk_bool_app(const BoolApp op, const std::vector<Formula> &args) {
+Formula mk_bool_app(const BoolOp op, const std::vector<Formula> &args) {
     return std::make_shared<BoolApp>(op, args);
 }
 
@@ -413,7 +413,7 @@ std::string to_koat(const Formula &f) {
             case RelOp::Neq: op = "!=";
             break;
         }
-        return to_koat(rel.lhs) + op + to_koat(rel.rhs);
+        return to_koat(rel.lhs) + " " + op + " " + to_koat(rel.rhs);
     } else if (std::holds_alternative<BoolAppPtr>(f)) {
         const auto app {std::get<BoolAppPtr>(f)};
         switch (app->op) {
