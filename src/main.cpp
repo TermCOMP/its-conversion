@@ -42,14 +42,14 @@ int main(int argc, char *argv[]) {
     if (to == "ari") {
         auto ari{its.to_ari()};
         for (unsigned i = 0; i < ari.childCount(); ++i) {
-            std::cout << ari.getChild(i).toCompactString() << std::endl;
+            std::cout << ari.getChild(i).toCompactString();
         }
     } else if (to == "koat") {
         std::cout << its.to_koat();
     } else if (to == "smt2") {
         auto res{its.to_its()};
         for (unsigned i = 0; i < res.childCount(); ++i) {
-            std::cout << res.getChild(i).toCompactString() << std::endl;
+            std::cout << res.getChild(i).toCompactString();
         }
     } else {
         std::cout << "unknown ouput format " << to << std::endl;

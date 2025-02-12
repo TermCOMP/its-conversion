@@ -285,13 +285,17 @@ namespace sexpresso {
 
     auto Sexp::toString() const -> std::string {
         auto ostream = std::ostringstream{};
-        toStringImpl(*this, ostream, 0, true);
+        if (!toStringImpl(*this, ostream, 0, true)) {
+            ostream << std::endl;
+        }
         return ostream.str();
     }
 
     auto Sexp::toCompactString() const -> std::string {
         auto ostream = std::ostringstream{};
-        toCompactStringImpl(*this, ostream, true);
+        if (!toCompactStringImpl(*this, ostream, true)) {
+            ostream << std::endl;
+        }
         return ostream.str();
     }
 

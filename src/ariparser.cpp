@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <fstream>
+#include <iostream>
 
 std::string unescape(const std::string &s) {
     if (s.starts_with("|")) {
@@ -17,9 +18,9 @@ ITS AriParser::parse(sexpresso::Sexp &s) {
     for (unsigned i = 0; i < s.childCount(); ++i) {
         auto c {s.getChild(i)};
         auto fst {c.getChild(0)};
-        auto str {fst.toString()};
+        auto str {fst.str()};
         if (str == "entrypoint") {
-            its.init = unescape(c.getChild(1).toString());
+            its.init = unescape(c.getChild(1).str());
         } else if (str == "rule") {
             its.rules.push_back(parse_rule(c));
         }
@@ -37,16 +38,16 @@ Rule AriParser::parse_rule(sexpresso::Sexp &s) {
 
 Lhs AriParser::parse_lhs(sexpresso::Sexp &s) {
     Lhs lhs;
-    lhs.location = unescape(s.getChild(0).toString());
+    lhs.location = unescape(s.getChild(0).str());
     for (unsigned i = 1; i < s.childCount(); ++i) {
-        lhs.args.push_back(unescape(s.getChild(i).toString()));
+        lhs.args.push_back(unescape(s.getChild(i).str()));
     }
     return lhs;
 }
 
 Rhs AriParser::parse_rhs(sexpresso::Sexp &s) {
     Rhs rhs;
-    rhs.location = unescape(s.getChild(0).toString());
+    rhs.location = unescape(s.getChild(0).str());
     for (unsigned i = 1; i < s.childCount(); ++i) {
         rhs.args.push_back(parse_expr(s.getChild(i)));
     }
@@ -54,7 +55,7 @@ Rhs AriParser::parse_rhs(sexpresso::Sexp &s) {
 }
 
 Formula AriParser::parse_formula(sexpresso::Sexp &s) {
-    const auto fst {s.getChild(0).toString()};
+    const auto fst {s.getChild(0).str()};
     if (fst == "exists") {
         Exists ex;
         auto decls {s.getChild(1)};
@@ -100,14 +101,14 @@ Formula AriParser::parse_formula(sexpresso::Sexp &s) {
 
 Expr AriParser::parse_expr(sexpresso::Sexp &s) {
     if (s.isString()) {
-        const auto str {s.toString()};
+        const auto str {s.str()};
         if (is_int(str)) {
             return Expr(stol(str));
         } else {
             return Expr(str);
         }
     }
-    const auto fst {s.getChild(0).toString()};
+    const auto fst {s.getChild(0).str()};
     ArithOp op;
     if (fst == "+") {
         op = ArithOp::Plus;
