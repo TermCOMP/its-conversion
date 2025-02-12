@@ -7,4 +7,4 @@ Tool to convert between the following three formats for Integer Transition Syste
 
 Run `its-conversion-static --help` for more information.
 
-The transformation is far from complete. Its supposed to work on the examples from the [TPDB](https://github.com/TermCOMP/TPDB), version `f8460262`, and will probably fail / yield incorrect results for other examples.
+The transformation is far from complete. It's supposed to work on the examples from the [TPDB](https://github.com/TermCOMP/TPDB), version `f8460262`, and will probably fail / yield incorrect results for other examples.
