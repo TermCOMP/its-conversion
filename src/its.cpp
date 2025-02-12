@@ -25,6 +25,45 @@ std::string escape(const std::string &s) {
     }
 }
 
+Expr mk_arith_app(const ArithOp op, const std::vector<Expr> &args) {
+    return std::make_shared<ArithApp>(op, args);
+}
+
+Expr mk_plus(const std::vector<Expr> &args) {
+    return mk_arith_app(ArithOp::Plus, args);
+}
+
+Expr mk_times(const std::vector<Expr> &args) {
+    return mk_arith_app(ArithOp::Times, args);
+}
+
+Expr mk_minus(const std::vector<Expr> &args) {
+    return mk_arith_app(ArithOp::Minus, args);
+}
+
+Expr mk_unary_minus(const Expr &arg) {
+    return mk_arith_app(ArithOp::UnaryMinus, {arg});
+}
+
+Formula mk_bool_app(const BoolApp op, const std::vector<Formula> &args) {
+    return std::make_shared<BoolApp>(op, args);
+}
+
+Formula mk_and(const std::vector<Formula> &args) {
+    return mk_bool_app(BoolOp::And, args);
+}
+
+Formula mk_or(const std::vector<Formula> &args) {
+    return mk_bool_app(BoolOp::Or, args);
+}
+
+Formula mk_not(const Formula &arg) {
+    return mk_bool_app(BoolOp::Not, {arg});
+}
+
+Formula True {mk_and({})};
+Formula False {mk_or({})};
+
 std::map<std::string, unsigned> ITS::locations() const {
     std::map<std::string, unsigned> res;
     for (const auto &r: rules) {

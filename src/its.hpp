@@ -27,6 +27,12 @@ struct ArithApp {
     std::vector<Expr> args;
 };
 
+Expr mk_arith_app(const ArithOp op, const std::vector<Expr> &args);
+Expr mk_plus(const std::vector<Expr> &args);
+Expr mk_times(const std::vector<Expr> &args);
+Expr mk_minus(const std::vector<Expr> &args);
+Expr mk_unary_minus(const Expr &arg);
+
 enum class RelOp {
     Lt, Leq, Eq, Neq, Geq, Gt
 };
@@ -57,6 +63,14 @@ struct BoolApp {
     BoolOp op;
     std::vector<Formula> args;
 };
+
+Formula mk_bool_app(const BoolOp op, const std::vector<Formula> &args);
+Formula mk_and(const std::vector<Formula> &args);
+Formula mk_or(const std::vector<Formula> &args);
+Formula mk_not(const Formula &arg);
+
+extern Formula True;
+extern Formula False;
 
 struct Exists {
     std::vector<std::string> vars;

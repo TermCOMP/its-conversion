@@ -31,9 +31,7 @@ Rule AriParser::parse_rule(sexpresso::Sexp &s) {
     Rule r;
     r.lhs = parse_lhs(s.getChild(1));
     r.rhs = parse_rhs(s.getChild(2));
-    if (s.childCount() > 3) {
-        r.cond = parse_formula(s.getChild(4));
-    }
+    r.cond = s.childCount() > 3 ? parse_formula(s.getChild(4)) : True;
     return r;
 }
 
@@ -78,7 +76,7 @@ Formula AriParser::parse_formula(sexpresso::Sexp &s) {
         for (unsigned i = 1; i < s.childCount(); ++i) {
             args.push_back(parse_formula(s.getChild(i)));
         }
-        return Formula(std::make_shared<BoolApp>(op, args));
+        return mk_bool_app(op, args);
     } else {
         RelOp op;
         if (fst == "=") {
@@ -128,7 +126,7 @@ Expr AriParser::parse_expr(sexpresso::Sexp &s) {
     for (unsigned i = 1; i < s.childCount(); ++i) {
         args.push_back(parse_expr(s.getChild(i)));
     }
-    return Expr(std::make_shared<ArithApp>(op, args));
+    return mk_arith_app(op, args);
 }
 
 ITS AriParser::loadFromFile(const std::string &filename) {
