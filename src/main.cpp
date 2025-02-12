@@ -7,11 +7,14 @@
 
 void print_help() {
     std::cout << "usage: its-conversion --to [ari|koat|smt2] $INPUT.[ari|koat|smt2]" << std::endl;
+    std::cout << "optional arguments:" << std::endl;
+    std::cout << "  --indent: enables indentation in sexpressions" << std::endl;
     exit(0);
 }
 
 int main(int argc, char *argv[]) {
     bool parse_to {false};
+    bool indent {false};
     std::string to, filename;
     for (int i = 0; i < argc; ++i) {
         if (parse_to) {
@@ -21,6 +24,8 @@ int main(int argc, char *argv[]) {
             parse_to = true;
         } else if (strcmp(argv[i], "--help") == 0) {
             print_help();
+        } else if (strcmp(argv[i], "--indent") == 0) {
+            indent = true;
         } else {
             filename = argv[i];
         }
@@ -42,14 +47,22 @@ int main(int argc, char *argv[]) {
     if (to == "ari") {
         auto ari{its.to_ari()};
         for (unsigned i = 0; i < ari.childCount(); ++i) {
-            std::cout << ari.getChild(i).toCompactString();
+            if (indent) {
+                std::cout << ari.getChild(i).toString();
+            } else {
+                std::cout << ari.getChild(i).toCompactString();
+            }
         }
     } else if (to == "koat") {
         std::cout << its.to_koat();
     } else if (to == "smt2") {
         auto res{its.to_its()};
         for (unsigned i = 0; i < res.childCount(); ++i) {
-            std::cout << res.getChild(i).toCompactString();
+            if (indent) {
+                std::cout << res.getChild(i).toString();
+            } else {
+                std::cout << res.getChild(i).toCompactString();
+            }
         }
     } else {
         std::cout << "unknown ouput format " << to << std::endl;
