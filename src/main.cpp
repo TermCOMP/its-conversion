@@ -4,6 +4,7 @@
 #include "parser.hpp"
 #include <iostream>
 #include <assert.h>
+#include <cstring>
 
 void print_help() {
     std::cout << "usage: its-conversion --to [ari|koat|smt2] $INPUT.[ari|koat|smt2]" << std::endl;

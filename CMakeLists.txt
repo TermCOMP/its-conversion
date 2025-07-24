@@ -66,6 +66,7 @@ target_sources(${EXECUTABLE}
 )
 
 target_include_directories(${EXECUTABLE} PRIVATE "/usr/include/antlr4-runtime")
+target_include_directories(${EXECUTABLE} PRIVATE "/usr/local/include/antlr4-runtime")
 
 target_link_libraries(${EXECUTABLE}
   ${ANTLR4}
