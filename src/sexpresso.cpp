@@ -196,6 +196,10 @@ namespace sexpresso {
         return ('"' + escape(s) + '"');
     }
 
+    bool needsParantheses(Sexp const &sexp) {
+        return sexp.isSexp() && (sexp.childCount() > 1 || (sexp.childCount() == 1 && sexp.value.sexp.front().isSexp()));
+    }
+
     static auto toStringImpl(Sexp const &sexp, std::ostringstream &ostream, unsigned indent, bool freshline) -> bool {
         switch (sexp.kind) {
         case SexpValueKind::STRING:
@@ -210,7 +214,9 @@ namespace sexpresso {
                     }
                 }
                 indent += 2;
-                ostream << '(';
+                if (needsParantheses(sexp)) {
+                    ostream << '(';
+                }
                 auto i = sexp.value.sexp.begin();
                 freshline = toStringImpl(*i, ostream, indent, false);
                 for (++i; i != sexp.value.sexp.end(); ++i) {
@@ -222,7 +228,9 @@ namespace sexpresso {
                     }
                     freshline = toStringImpl(*i, ostream, indent, true);
                 }
-                ostream << ')';
+                if (needsParantheses(sexp)) {
+                    ostream << ')';
+                }
                 indent -= 2;
                 ostream << '\n';
                 for (unsigned i = 0; i < indent; ++i) {
@@ -230,7 +238,9 @@ namespace sexpresso {
                 }
                 return true;
             } else {
-                ostream << '(';
+                if (needsParantheses(sexp)) {
+                    ostream << '(';
+                }
                 auto freshline = false;
                 for (auto i = sexp.value.sexp.begin(); i != sexp.value.sexp.end(); ++i) {
                     freshline = toStringImpl(*i, ostream, indent + 2, freshline);
@@ -238,7 +248,9 @@ namespace sexpresso {
                         ostream << ' ';
                     }
                 }
-                ostream << ')';
+                if (needsParantheses(sexp)) {
+                    ostream << ')';
+                }
                 return false;
             }
         }
@@ -255,7 +267,9 @@ namespace sexpresso {
                 if (!freshline) {
                     ostream << '\n';
                 }
-                ostream << '(';
+                if (needsParantheses(sexp)) {
+                    ostream << '(';
+                }
                 auto i = sexp.value.sexp.begin();
                 freshline = toCompactStringImpl(*i, ostream, false);
                 for (++i; i != sexp.value.sexp.end(); ++i) {
@@ -264,11 +278,15 @@ namespace sexpresso {
                     }
                     freshline = toCompactStringImpl(*i, ostream, true);
                 }
-                ostream << ')';
+                if (needsParantheses(sexp)) {
+                    ostream << ')';
+                }
                 ostream << '\n';
                 return true;
             } else {
-                ostream << '(';
+                if (needsParantheses(sexp)) {
+                    ostream << '(';
+                }
                 auto freshline = false;
                 for (auto i = sexp.value.sexp.begin(); i != sexp.value.sexp.end(); ++i) {
                     freshline = toCompactStringImpl(*i, ostream, freshline);
@@ -276,7 +294,9 @@ namespace sexpresso {
                         ostream << ' ';
                     }
                 }
-                ostream << ')';
+                if (needsParantheses(sexp)) {
+                    ostream << ')';
+                }
                 return false;
             }
         }
