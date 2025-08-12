@@ -38,7 +38,7 @@ Rule AriParser::parse_rule(sexpresso::Sexp &s) {
 
 Lhs AriParser::parse_lhs(sexpresso::Sexp &s) {
     Lhs lhs;
-    lhs.location = unescape(s.getChild(0).str());
+    lhs.location = unescape(s.isString() ? s.str() : s.getChild(0).str());
     for (unsigned i = 1; i < s.childCount(); ++i) {
         lhs.args.push_back(unescape(s.getChild(i).str()));
     }
@@ -47,7 +47,7 @@ Lhs AriParser::parse_lhs(sexpresso::Sexp &s) {
 
 Rhs AriParser::parse_rhs(sexpresso::Sexp &s) {
     Rhs rhs;
-    rhs.location = unescape(s.getChild(0).str());
+    rhs.location = unescape(s.isString() ? s.str() : s.getChild(0).str());
     for (unsigned i = 1; i < s.childCount(); ++i) {
         rhs.args.push_back(parse_expr(s.getChild(i)));
     }
