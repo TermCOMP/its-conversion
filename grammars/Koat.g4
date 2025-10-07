@@ -11,7 +11,7 @@ var     :       ID;
 goal    :       LPAR GOAL (CPX | TERM) RPAR;
 start   :       LPAR START LPAR FS fs RPAR RPAR;
 sink    :       LPAR SINK LPAR FS fs RPAR RPAR;
-vardecl :       LPAR VAR ID+ RPAR;
+vardecl :       LPAR VAR ID* RPAR;
 transs  :       LPAR RULES trans* RPAR;
 
 // transitions

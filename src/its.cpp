@@ -246,17 +246,21 @@ std::string ITS::to_koat() const {
         std::string s {"  "};
         s += r.lhs.location;
         s += "(";
-        for (const auto &arg: r.lhs.args) {
-            s += arg + ",";
+        if (!r.lhs.args.empty()) {
+            for (const auto &arg : r.lhs.args) {
+                s += arg + ",";
+            }
+            s = s.substr(0, s.length() - 1);
         }
-        s = s.substr(0, s.length() - 1);
         s += ") -> ";
         s += r.rhs.location;
         s += "(";
-        for (const auto &arg: r.rhs.args) {
-            s += ::to_koat(arg) + ",";
+        if (!r.rhs.args.empty()) {
+            for (const auto &arg : r.rhs.args) {
+                s += ::to_koat(arg) + ",";
+            }
+            s = s.substr(0, s.length() - 1);
         }
-        s = s.substr(0, s.length() - 1);
         s += ")";
         if (!is_true(r.cond)) {
             s += " :|: ";
