@@ -431,7 +431,20 @@ std::string to_koat(const Formula &f) {
             break;
             case BoolOp::Or: op = "||";
             break;
-            case BoolOp::Not: throw std::invalid_argument(".koat does not allow negation");
+            case BoolOp::Not: {
+                assert(app->args.size() == 1);
+                const auto arg = app->args.at(0);
+                if (std::holds_alternative<Rel>(arg)) {
+                    return to_koat(std::get<Rel>(arg).negate());
+                } else if (std::holds_alternative<BoolAppPtr>(arg)) {
+                    const auto innerApp = std::get<BoolAppPtr>(arg);
+                    if (innerApp->op == BoolOp::Not) {
+                        assert(innerApp->args.size() == 1);
+                        return to_koat(innerApp->args.at(0));
+                    }
+                }
+                throw std::invalid_argument(".koat does not support negation");
+            };
         }
         for (const auto &arg: app->args) {
             res += to_koat(arg) + " " + op + " ";

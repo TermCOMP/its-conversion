@@ -41,6 +41,26 @@ struct Rel {
     Expr lhs;
     RelOp op;
     Expr rhs;
+
+    Rel negate() const {
+        RelOp newOp;
+        switch (op) {
+            case RelOp::Eq: newOp = RelOp::Neq;
+            break;
+            case RelOp::Geq: newOp = RelOp::Lt;
+            break;
+            case RelOp::Gt: newOp = RelOp::Leq;
+            break;
+            case RelOp::Leq: newOp = RelOp::Gt;
+            break;
+            case RelOp::Lt: newOp = RelOp::Geq;
+            break;
+            case RelOp::Neq: newOp = RelOp::Eq;
+            break;
+        }
+        return Rel(lhs, newOp, rhs);
+    }
+
 };
 
 enum class BoolOp {

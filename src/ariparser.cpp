@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 std::string unescape(const std::string &s) {
     if (s.starts_with("|")) {
@@ -78,6 +79,9 @@ Formula AriParser::parse_formula(sexpresso::Sexp &s) {
             args.push_back(parse_formula(s.getChild(i)));
         }
         return mk_bool_app(op, args);
+    } else if (fst == "not") {
+        assert(s.childCount() == 2);
+        return mk_bool_app(BoolOp::Not, std::vector{parse_formula(s.getChild(1))});
     } else {
         RelOp op;
         if (fst == "=") {
@@ -93,7 +97,7 @@ Formula AriParser::parse_formula(sexpresso::Sexp &s) {
         } else if (fst == "<") {
             op = RelOp::Lt;
         } else {
-            throw std::invalid_argument("unknown relation");
+            throw std::invalid_argument("unknown relation " + fst);
         }
         return Formula(Rel{parse_expr(s.getChild(1)), op, parse_expr(s.getChild(2))});
     }
